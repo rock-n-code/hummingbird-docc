@@ -1,8 +1,49 @@
+# ===----------------------------------------------------------------------===
+# 
+# This source file is part of the Hummingbird DocC Middleware open source project
+# 
+# Copyright (c) 2025 Röck+Cöde VoF. and the Hummingbird DocC Middleware project authors
+# Licensed under the EUPL 1.2 or later.
+# 
+# See LICENSE for license information
+# See CONTRIBUTORS for the list of Hummingbird DocC Middleware project authors
+# 
+# ===----------------------------------------------------------------------===
+
+# Mac OS
 .DS_Store
-/.build
-/Packages
-xcuserdata/
+.netrc
+
+# Xcode
 DerivedData/
+
+## User settings
+xcuserdata/
+
+## Obj-C/Swift specific
+*.hmap
+
+## App packaging
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager
+# Add this line if you want to avoid checking in source code from Swift Package Manager dependencies.
+Packages/
+# Package.pins
+# Package.resolved
+*.xcodeproj
+.build
+.devContainer
+# Xcode automatically generates this directory with a .xcworkspacedata file and xcuserdata
+# hence it is not needed unless you have added a package configuration file to your project
+.swiftpm
 .swiftpm/configuration/registries.json
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
-.netrc
+
+# Visual Studio Code
+.vscode
+
+# DocC documentation
+*.doccarchive
