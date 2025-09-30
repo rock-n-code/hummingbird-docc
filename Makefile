@@ -20,10 +20,18 @@ export $(shell sed 's/=.*//' $(environment))
 # LIBRARY
 
 lib-build: ## Builds the library
-	@swift build
+	@swift build \
+		--target $(SPM_LIBRARY_TARGET)
 
 lib-release: ## Releases the library
-	@swift build -c release
+	@swift build \
+		--target $(SPM_LIBRARY_TARGET) \
+		--configuration release
+
+lib-sample: ## Runs the sample app of the library
+	@swift run \
+		--configuration release \
+		--disable-sandbox
 
 lib-test: ## Runs the unit tests for the library
 	@swift test \
@@ -41,8 +49,8 @@ pkg-reset: ## Resets the complete SPM cache/build folder of the package
 	@swift package reset
 
 pkg-pristine: pkg-clean pkg-reset ## Deletes all built artifacts, caches, and documentations of the package
+	@rm -drf $(DOCC_ARCHIVE_OUTPUT)
 	@rm -drf $(DOCC_GITHUB_OUTPUT)
-	@rm -drf $(DOCC_XCODE_OUTPUT)
 
 pkg-outdated: ## Lists the SPM package dependencies that can be updated
 	@swift package update --dry-run
@@ -52,7 +60,18 @@ pkg-update: ## Updates the SPM package dependencies
 	
 # DOCUMENTATION
 
-doc-generate: doc-generate-xcode doc-generate-github ## Generates the library documentation for both Github and Xcode
+doc-generate: doc-generate-archive doc-generate-github ## Generates the library documentation for both Github and Xcode
+
+doc-generate-archive: ## Generates the library documentation archive for Xcode
+	@swift package \
+		--allow-writing-to-directory $(DOCC_ARCHIVE_OUTPUT) \
+		generate-documentation \
+		--target $(SPM_LIBRARY_TARGET) \
+		--hosting-base-path $(DOCC_ARCHIVE_BASE_PATH) \
+		--output-path $(DOCC_ARCHIVE_OUTPUT) \
+		--symbol-graph-minimum-access-level $(DOCC_CONFIG_MINIMUM_ACCESS_LEVEL) \
+		--include-extended-types \
+		--enable-inherited-docs
 
 doc-generate-github: ## Generates the library documentation for Github
 	@swift package \
@@ -62,21 +81,20 @@ doc-generate-github: ## Generates the library documentation for Github
 		--disable-indexing \
 		--transform-for-static-hosting \
 		--hosting-base-path $(DOCC_GITHUB_BASE_PATH) \
-		--output-path $(DOCC_GITHUB_OUTPUT)
-
-doc-generate-xcode: ## Generates the library documentation for Xcode
-	@swift package \
-		--allow-writing-to-directory $(DOCC_XCODE_OUTPUT) \
-		generate-documentation \
-		--target $(SPM_LIBRARY_TARGET) \
-		--output-path $(DOCC_XCODE_OUTPUT)
+		--output-path $(DOCC_GITHUB_OUTPUT) \
+		--symbol-graph-minimum-access-level $(DOCC_CONFIG_MINIMUM_ACCESS_LEVEL) \
+		--include-extended-types \
+		--enable-inherited-docs
 
 doc-preview: ## Previews the library documentation in Safari
-	@open -a safari $(DOCC_PREVIEW_URL)
+	@open -a safari $(DOCC_CONFIG_PREVIEW_URL)
 	@swift package \
 		--disable-sandbox \
 		preview-documentation \
-		--target $(SPM_LIBRARY_TARGET)
+		--target $(SPM_LIBRARY_TARGET) \
+		--symbol-graph-minimum-access-level $(DOCC_CONFIG_MINIMUM_ACCESS_LEVEL) \
+		--include-extended-types \
+		--enable-inherited-docs
 
 # IDE
 

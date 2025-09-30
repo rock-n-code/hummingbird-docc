@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: DocCMiddleware.package,
+    name: HummingbirdDocC.package,
     platforms: [
         .iOS(.v17),
         .macCatalyst(.v17),
@@ -13,38 +13,54 @@ let package = Package(
     ],
     products: [
         .library(
-            name: DocCMiddleware.package,
-            targets: [DocCMiddleware.target]
+            name: HummingbirdDocC.package,
+            targets: [HummingbirdDocC.target]
         ),
     ],
     dependencies: [
+        .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.4.0"),
         .package(url: "https://github.com/hummingbird-project/hummingbird.git", from: "2.0.0"),
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
     ],
     targets: [
+        .executableTarget(
+            name: HummingbirdDocC.sample,
+            dependencies: [
+                .byName(name: HummingbirdDocC.target),
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+            ],
+            path: "Samples/HummingbirdDocC",
+            swiftSettings: [
+                // Enable better optimizations when building in Release configuration. Despite the use of
+                // the `.unsafeFlags` construct required by SwiftPM, this flag is recommended for Release
+                // builds. See <https://github.com/swift-server/guides#building-for-production> for details.
+                .unsafeFlags(["-cross-module-optimization"], .when(configuration: .release)),
+            ]
+        ),
         .target(
-            name: DocCMiddleware.target,
+            name: HummingbirdDocC.target,
             dependencies: [
                 .product(name: "Hummingbird", package: "hummingbird"),
             ],
-            path: "Sources/DocCMiddleware",
+            path: "Sources/HummingbirdDocC",
             swiftSettings: [.enableExperimentalFeature("StrictConcurrency=complete")]
         ),
         .testTarget(
-            name: DocCMiddleware.test,
+            name: HummingbirdDocC.test,
             dependencies: [
                 .product(name: "HummingbirdTesting", package: "hummingbird"),
-                .byName(name: DocCMiddleware.target)
+                .byName(name: HummingbirdDocC.target)
             ],
-            path: "Tests/DocCMiddleware"
+            path: "Tests/HummingbirdDocC"
         ),
     ]
 )
 
 // MARK: - Constants
 
-enum DocCMiddleware {
-    static let package = "hummingbird-docc-middleware"
-    static let target = "DocCMiddleware"
-    static let test = "\(DocCMiddleware.target)Tests"
+enum HummingbirdDocC {
+    static let package = "hummingbird-docc"
+    static let sample = "\(HummingbirdDocC.target)Sample"
+    static let target = "HummingbirdDocC"
+    static let test = "\(HummingbirdDocC.target)Test"
 }
