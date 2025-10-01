@@ -40,7 +40,6 @@ import struct Logging.Logger
 /// 15. *Redirects the URI path `/<ArchiveName>/index/<path/to/file>` to the resource on `/<ArchiveName>.doccarchive/index/<path/to/file>`*
 /// 16. *Redirects the URI path `/<ArchiveName>/js/<path/to/file>` to the resource on `/<ArchiveName>.doccarchive/js/<path/to/file>`*
 /// 17. *Redirects the URI path `/<ArchiveName>/videos/<path/to/file>` to the resource on `/<ArchiveName>.doccarchive/videos/<path/to/file>`*
-///
 public struct DocCMiddleware<
     Context: RequestContext,
     FileSystemProvider: FileProvider
@@ -83,7 +82,7 @@ public struct DocCMiddleware<
                 threadPool: configuration.threadPool,
                 logger: logger
             ),
-            logger: logger,
+            logger: logger
         )
     }
     
@@ -95,7 +94,7 @@ public struct DocCMiddleware<
     init(
         configuration: DocCConfiguration,
         fileProvider: FileSystemProvider,
-        logger: Logger,
+        logger: Logger
     ) {
         self.logger = logger
         self.fileProvider = fileProvider
